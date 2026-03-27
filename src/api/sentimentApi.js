@@ -1,5 +1,5 @@
 export const analyzeSentiment = async (text) => {
-  const response = await fetch("http://localhost:5000/analyze", {
+  const response = await fetch("https://sentilyticsai.onrender.com/analyze", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
