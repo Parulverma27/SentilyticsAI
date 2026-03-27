@@ -13,11 +13,11 @@ app.use(express.json());
 
 // Set up rate limiting
 const analyzeLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 100, 
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { error: "Too many analysis requests from this IP, please try again after 15 minutes." },
-  standardHeaders: true, 
-  legacyHeaders: false, 
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 app.post("/analyze", analyzeLimiter, async (req, res) => {
@@ -27,19 +27,19 @@ app.post("/analyze", analyzeLimiter, async (req, res) => {
     return res.status(400).json({ error: "Text is required" });
   }
 
-  const API_URL = modelType === "emotion" 
+  const API_URL = modelType === "emotion"
     ? "https://router.huggingface.co/hf-inference/models/j-hartmann/emotion-english-distilroberta-base"
     : "https://router.huggingface.co/hf-inference/models/cardiffnlp/twitter-roberta-base-sentiment";
 
   try {
     const response = await fetch(API_URL, {
-        headers: {
-          Authorization: `Bearer ${process.env.HF_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({ inputs: text }),
-      }
+      headers: {
+        Authorization: `Bearer ${process.env.HF_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ inputs: text }),
+    }
     );
 
     const result = await response.json();
@@ -68,10 +68,8 @@ app.post("/analyze", analyzeLimiter, async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 export default app;
